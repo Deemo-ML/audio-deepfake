@@ -1,0 +1,276 @@
+system_prompt: |
+  You are an audio forensic analyst for the TRIDENT audio deepfake detection task.
+
+  Allowed audio artifacts:
+  - Clipping
+  - Hiss
+  - Buzz
+  - Pops
+  - Unnatural Prosody
+
+  Follow the required output format exactly.
+  Be conservative. Do not invent unsupported artifacts.
+
+artifact_definitions: |
+  Artifact reference guide:
+  - Clipping: harsh, fuzzy, crackling, or saturated sound when the audio is too loud.
+  - Hiss: high-frequency static noise, similar to a persistent shhhh sound.
+  - Buzz: low-frequency tone or hum, often resembling electrical interference.
+  - Pops: abrupt, short, sharp clicks or bursts that interrupt the audio.
+  - Unnatural Prosody: speech that sounds robotic, monotonous, flat, or rhythmically unnatural.
+
+observation:
+  audio: |
+    Input setting: Audio-only observation.
+    Listen to the audio carefully and check whether each allowed artifact is audibly present.
+
+    Use audio only. Do not use detector probabilities. Do not guess.
+    If the cue is weak or ambiguous, mark it as uncertain.
+
+    Question:
+    {question}
+
+    Output exactly in this format:
+    Clipping: yes/no/uncertain | Cue: ...
+    Hiss: yes/no/uncertain | Cue: ...
+    Buzz: yes/no/uncertain | Cue: ...
+    Pops: yes/no/uncertain | Cue: ...
+    Unnatural Prosody: yes/no/uncertain | Cue: ...
+    Overall label: Likely Authentic/Likely Manipulated
+
+  audio_evidence: |
+    Input setting: Audio plus detector evidence observation.
+    Listen to the audio carefully and compare it with the structured detector evidence.
+
+    The detector evidence is used only to guide attention. The final postprocessed answer will still be constrained by code.
+    Do not invent artifacts outside the allowed list.
+
+    Detector evidence:
+    {evidence_text}
+
+    Question:
+    {question}
+
+    Output exactly in this format:
+    Clipping: yes/no/uncertain | Cue: ...
+    Hiss: yes/no/uncertain | Cue: ...
+    Buzz: yes/no/uncertain | Cue: ...
+    Pops: yes/no/uncertain | Cue: ...
+    Unnatural Prosody: yes/no/uncertain | Cue: ...
+    Overall label: Likely Authentic/Likely Manipulated
+
+prompt_generation:
+  audio:
+    tfq: |
+      Input setting: Audio-only direct answer.
+      Use only the audio signal.
+
+      Question:
+      {question}
+
+      Return exactly one word with no punctuation or explanation:
+      True
+      or
+      False
+
+    mcq: |
+      Input setting: Audio-only direct answer.
+      Use only the audio signal.
+
+      Question:
+      {question}
+
+      Options:
+      {options_text}
+
+      Return only uppercase option letter(s), separated by commas with no spaces.
+      Valid examples: A, B, A,C, E
+
+    typea_oeq: |
+      Input setting: Audio-only direct answer.
+      The sample is known to be manipulated.
+      Use only the audio signal.
+
+      Question:
+      {question}
+
+      Describe only audible manipulation artifacts.
+      Be conservative. Do not invent artifacts.
+      Do not repeat generic definitions.
+
+      Output format:
+      Artifact Name: brief audio-specific reason.
+
+      No JSON. No markdown tables.
+
+    typeb_oeq: |
+      Input setting: Audio-only direct answer.
+      Use only the audio signal.
+
+      Question:
+      {question}
+
+      Start exactly with one of:
+      Likely Authentic.
+      or
+      Likely Manipulated.
+
+      Then provide concise audio evidence.
+      If artifact findings are listed, they must be consistent with the final label.
+
+      No JSON. No markdown tables.
+
+  audio_evidence:
+    tfq: |
+      Input setting: Audio plus detector evidence direct answer.
+      Use both the audio signal and detector evidence.
+      The detector evidence constrains reportable artifacts.
+
+      Detector evidence:
+      {evidence_text}
+
+      Question:
+      {question}
+
+      Return exactly one word with no punctuation or explanation:
+      True
+      or
+      False
+
+    mcq: |
+      Input setting: Audio plus detector evidence direct answer.
+      Use both the audio signal and detector evidence.
+      The detector evidence constrains reportable artifacts.
+
+      Detector evidence:
+      {evidence_text}
+
+      Question:
+      {question}
+
+      Options:
+      {options_text}
+
+      Return only uppercase option letter(s), separated by commas with no spaces.
+      Valid examples: A, B, A,C, E
+
+    typea_oeq: |
+      Input setting: Audio plus detector evidence direct answer.
+      The sample is known to be manipulated.
+      Use the audio signal to make the explanation specific.
+      Use detector evidence to constrain reportable artifacts.
+
+      Detector evidence:
+      {evidence_text}
+
+      Question:
+      {question}
+
+      Rules:
+      - Mention only Reportable artifact candidates.
+      - Never mention Forbidden artifacts.
+      - Do not justify an artifact only by saying its probability is high.
+      - Use audio-specific cues when possible.
+
+      Output format:
+      Artifact Name: brief audio-specific reason.
+
+      No JSON. No markdown tables.
+
+    typeb_oeq: |
+      Input setting: Audio plus detector evidence direct answer.
+      Use both the audio signal and detector evidence.
+
+      Detector evidence:
+      {evidence_text}
+
+      Required final label:
+      {required_label}
+
+      Question:
+      {question}
+
+      Rules:
+      - The response must start exactly with: {required_label}.
+      - Mention only Reportable artifact candidates.
+      - Never mention Forbidden artifacts.
+      - Use audio-specific cues when possible.
+      - If the label is Likely Authentic, do not list artifact findings.
+
+      No JSON. No markdown tables.
+
+  evidence:
+    tfq: |
+      Input setting: Evidence-only direct answer.
+      You do not receive audio. Use only detector evidence.
+
+      Detector evidence:
+      {evidence_text}
+
+      Question:
+      {question}
+
+      Return exactly one word with no punctuation or explanation:
+      True
+      or
+      False
+
+    mcq: |
+      Input setting: Evidence-only direct answer.
+      You do not receive audio. Use only detector evidence.
+
+      Detector evidence:
+      {evidence_text}
+
+      Question:
+      {question}
+
+      Options:
+      {options_text}
+
+      Return only uppercase option letter(s), separated by commas with no spaces.
+      Valid examples: A, B, A,C, E
+
+    typea_oeq: |
+      Input setting: Evidence-only direct answer.
+      The sample is known to be manipulated.
+      You do not receive audio. Use only detector evidence.
+
+      Detector evidence:
+      {evidence_text}
+
+      Question:
+      {question}
+
+      Rules:
+      - Mention only Reportable artifact candidates.
+      - Never mention Forbidden artifacts.
+      - Do not invent artifacts.
+      - Do not claim to hear the audio.
+
+      Output format:
+      Artifact Name: brief evidence-based reason.
+
+      No JSON. No markdown tables.
+
+    typeb_oeq: |
+      Input setting: Evidence-only direct answer.
+      You do not receive audio. Use only detector evidence.
+
+      Detector evidence:
+      {evidence_text}
+
+      Required final label:
+      {required_label}
+
+      Question:
+      {question}
+
+      Rules:
+      - The response must start exactly with: {required_label}.
+      - Mention only Reportable artifact candidates.
+      - Never mention Forbidden artifacts.
+      - Do not claim to hear the audio.
+      - If the label is Likely Authentic, do not list artifact findings.
+
+      No JSON. No markdown tables.
