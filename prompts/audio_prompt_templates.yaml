@@ -88,7 +88,7 @@ prompt_generation:
 
     typea_oeq: |
       Input setting: Audio-only direct answer.
-      The sample is known to be manipulated.
+      Please perform a detailed analysis of artifacts in this sample that seem inauthentic.
       Use only the audio signal.
 
       Question:
@@ -105,6 +105,7 @@ prompt_generation:
 
     typeb_oeq: |
       Input setting: Audio-only direct answer.
+      Please analyze the provided sample and identify any artifacts that indicate it may be inauthentic or manipulated.
       Use only the audio signal.
 
       Question:
@@ -156,7 +157,7 @@ prompt_generation:
 
     typea_oeq: |
       Input setting: Audio plus detector evidence direct answer.
-      The sample is known to be manipulated.
+      Please perform a detailed analysis of artifacts in this sample that seem inauthentic.
       Use the audio signal to make the explanation specific.
       Use detector evidence to constrain reportable artifacts.
 
@@ -179,6 +180,7 @@ prompt_generation:
 
     typeb_oeq: |
       Input setting: Audio plus detector evidence direct answer.
+      Please analyze the provided sample and identify any artifacts that indicate it may be inauthentic or manipulated.
       Use both the audio signal and detector evidence.
 
       Detector evidence:
@@ -233,7 +235,7 @@ prompt_generation:
 
     typea_oeq: |
       Input setting: Evidence-only direct answer.
-      The sample is known to be manipulated.
+      Please perform a detailed analysis of artifacts in this sample that seem inauthentic.
       You do not receive audio. Use only detector evidence.
 
       Detector evidence:
@@ -255,6 +257,7 @@ prompt_generation:
 
     typeb_oeq: |
       Input setting: Evidence-only direct answer.
+      Please analyze the provided sample and identify any artifacts that indicate it may be inauthentic or manipulated.
       You do not receive audio. Use only detector evidence.
 
       Detector evidence:

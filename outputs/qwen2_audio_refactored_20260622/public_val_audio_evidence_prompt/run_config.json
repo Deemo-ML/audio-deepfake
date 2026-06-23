@@ -1,0 +1,53 @@
+{
+  "args": {
+    "split": "public_val",
+    "audio_root": "/root/autodl-tmp/trident/OEQ/public_val/media/audio",
+    "question_root": "/root/autodl-tmp/trident",
+    "prob_csv": "/root/project/audio-deepfake-main/audio-deepfake-main/evidence_files/val_predictions_epoch_15.csv",
+    "model_path": "/root/autodl-tmp/Qwen2-Audio-7B-Instruct",
+    "output_dir": "/root/project/audio-deepfake-main/audio-deepfake-main/outputs/qwen2_audio_refactored/public_val",
+    "live_log_file": "/root/project/audio-deepfake-main/audio-deepfake-main/outputs/qwen2_audio_refactored/public_val/live_generation.jsonl",
+    "threshold_json": "/root/project/audio-deepfake-main/audio-deepfake-main/evidence_files/audio_thresholds.json",
+    "prompt_template": "/root/project/audio-deepfake-main/audio-deepfake-main/prompts/audio_prompt_templates.yaml",
+    "input_source": "audio_evidence",
+    "answer_strategy": "prompt",
+    "mode": "all",
+    "observation_max_new_tokens": 192,
+    "max_new_tokens": 128,
+    "tfq_max_new_tokens": 8,
+    "mcq_max_new_tokens": 16,
+    "typea_max_new_tokens": 64,
+    "typeb_max_new_tokens": 128,
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "rule_fallback": true,
+    "disable_llm": false,
+    "dry_run": false,
+    "num_samples": 3,
+    "first_n_questions": null,
+    "batch_size": 8,
+    "allow_missing": false,
+    "device": "cuda",
+    "dtype": "bf16",
+    "check_deps": false,
+    "save_prompt_examples": false,
+    "prompt_examples_per_task": 2
+  },
+  "resolved_audio_root": "/root/autodl-tmp/trident/OEQ/public_val/media/audio",
+  "tasks": [
+    "tfq",
+    "mcq",
+    "typea_oeq",
+    "typeb_oeq"
+  ],
+  "thresholds": {
+    "fake_threshold": 0.47,
+    "artifact_thresholds": {
+      "Clipping": 0.05,
+      "Hiss": 0.7,
+      "Buzz": 0.2,
+      "Pops": 0.05,
+      "Unnatural Prosody": 0.45
+    }
+  }
+}

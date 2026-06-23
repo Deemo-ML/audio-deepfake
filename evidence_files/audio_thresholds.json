@@ -1,0 +1,10 @@
+{
+  "fake_threshold": 0.47,
+  "artifact_thresholds": {
+    "Clipping": 0.05,
+    "Hiss": 0.7,
+    "Buzz": 0.2,
+    "Pops": 0.05,
+    "Unnatural Prosody": 0.45
+  }
+}

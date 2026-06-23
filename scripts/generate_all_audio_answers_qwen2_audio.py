@@ -70,9 +70,9 @@ DEFAULT_THRESHOLDS = {
 AUDIO_EXTENSIONS = {".wav", ".mp3", ".flac", ".m4a", ".ogg", ".aac", ".mp4"}
 TASKS = ["tfq", "mcq", "typea_oeq", "typeb_oeq"]
 DEFAULT_AUDIO_ROOTS = {
-    "train": Path(r"E:\data\trident\OEQ\train\media\audio"),
-    "public_val": Path(r"E:\data\trident\OEQ\public_val\media\audio"),
-    "private_test": Path(r"E:\data\trident\OEQ\private_test\media\audio"),
+    "train": Path(r"/root/autodl-tmp/trident/OEQ/train/media/audio"),
+    "public_val": Path(r"/root/autodl-tmp/trident/OEQ/public_val/media/audio"),
+    "private_test": Path(r"/root/autodl-tmp/trident/OEQ/private_test/media/audio"),
 }
 
 SYSTEM_PROMPT = """You are an audio forensic analyst for the TRIDENT audio deepfake detection task.
@@ -989,7 +989,7 @@ def final_mcq_answer(options: Dict[str, str], detected_artifacts: List[str]) -> 
     if none_letter:
         return none_letter, False
     logging.warning("No MCQ artifact option matched and no explicit none option exists")
-    return "", True
+    return "E", True
 
 def check_qwen2_audio_dependencies() -> Tuple[bool, List[str]]:
     """Check dependencies required by Qwen/Qwen2-Audio-7B-Instruct."""
@@ -1067,7 +1067,7 @@ class Qwen2AudioInferencer:
         self.device = device
         self.temperature = temperature
         self.top_p = top_p
-        self.processor = AutoProcessor.from_pretrained(model_path, trust_remote_code=True)
+        self.processor = AutoProcessor.from_pretrained(model_path, trust_remote_code=True, sampling_rate=16000)
         self.model = Qwen2AudioForConditionalGeneration.from_pretrained(model_path, **kwargs)
         if device != "cuda":
             self.model.to(device)
@@ -1127,8 +1127,8 @@ class Qwen2AudioInferencer:
             },
         ]
         text = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        audios = [self._load_audio(audio_path)]
-        inputs = self.processor(text=[text], audios=audios, return_tensors="pt", padding=True)
+        audio = self._load_audio(audio_path)
+        inputs = self.processor(text=[text], audio=audio, return_tensors="pt", padding=True)
         inputs = self._move_inputs_to_device(inputs)
         generated = self._generate_from_inputs(inputs, max_new_tokens)
         decoded = self._decode_new_tokens(generated, inputs, 1)
@@ -1170,7 +1170,7 @@ class Qwen2AudioInferencer:
                 self.processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=True)
                 for conversation in conversations
             ]
-            inputs = self.processor(text=texts, audios=audios, return_tensors="pt", padding=True)
+            inputs = self.processor(text=texts, audio=audios, return_tensors="pt", padding=True)
             inputs = self._move_inputs_to_device(inputs)
             generated = self._generate_from_inputs(inputs, max_new_tokens)
             decoded = self._decode_new_tokens(generated, inputs, len(audio_paths))
